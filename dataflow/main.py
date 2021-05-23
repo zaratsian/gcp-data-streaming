@@ -61,21 +61,17 @@ def parse_pubsub(event):
 
 
 def preprocess_event(event):
-    return (event['userid'], event['score'])
-
-
-def extract_weapon_type(event):
-    return event['weapon']
+    return (event['name'], event['value'])
 
 
 def sum_by_group(GroupByKey_tuple):
       (word, list_of_ones) = GroupByKey_tuple
-      return {"word":word, "count":sum(list_of_ones)}
+      return {"name":word, "sum":sum(list_of_ones)}
 
 
 def avg_by_group(GroupByKey_tuple):
     (k,v) = GroupByKey_tuple
-    return {"userid":k, "score": (sum(v) / len(v)) }
+    return {"name":k, "avg": (sum(v) / len(v)) }
 
 
 def run(argv=None):
