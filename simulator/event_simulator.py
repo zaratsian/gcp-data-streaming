@@ -78,7 +78,7 @@ def simulate_payload(enable_sleep=True):
         'group': random.choice(['groupA', 'groupB', 'groupC']),
         'duration': random.random() * 1000,
         'flag': random.randint(0,1),
-        'score': random.triangular(1,100,30) / 100
+        'value': random.triangular(1,100,30) / 100
     }
     return payload
 
