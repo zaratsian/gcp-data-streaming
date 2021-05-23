@@ -1,2 +1,2 @@
-docker rmi -f antidote_ensemble
-docker build --tag antidote_ensemble . 
+docker rmi -f dataflow_stream
+docker build --tag dataflow_stream . 

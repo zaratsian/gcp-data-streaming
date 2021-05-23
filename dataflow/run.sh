@@ -1,2 +1,2 @@
-docker rm antidote_ensemble
-docker run -it --net mlnet --name antidote_ensemble antidote_ensemble
+docker rm dataflow_stream
+docker run -it --name dataflow_stream dataflow_stream
