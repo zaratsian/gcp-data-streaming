@@ -1,7 +1,7 @@
 
 ####################################################
 #
-#   Antidote ML Events Simulator
+#   Events Simulator
 #
 #   This simulator will randomly generate events,
 #   at randomized intervals, on user-idefined port.
@@ -20,20 +20,10 @@ from google.cloud import pubsub_v1
 # Config
 ####################################################
 
-try:
-        ensemble_container = sys.argv[1]
-except:
-        ensemble_container = 'antidote_ensemble'
+project_id   = 'dz-apps' 
+pubsub_topic = 'data-stream'
 
-print('[ DEBUG ] Ensemble Container Name: {}'.format(ensemble_container))
-
-try:
-    simulator_config = {
-        'host': socket.gethostbyname(ensemble_container),
-        'port': 5000
-    }
-except:
-    simulator_config = {}
+usernames = ['mickey', 'minnie', 'snow white', 'anna', 'elsa', 'olaf', 'cinderella', 'belle', 'donald', 'goofy', 'simba']
 
 ####################################################
 # Functions
@@ -76,61 +66,19 @@ def pubsub_callback( message_future ):
         print('[ INFO ] Result: {}'.format(message_future.result()))
 
 
-def get_ip():
-    try:
-        hostname = socket.gethostname()
-        ip_address = socket.gethostbyname(hostname)
-    except:
-        ip_address = ''
-    
-    return ip_address
-
-
-def send_tcp(socket_tcp_obj, payload):
-    try:
-        if type(payload) is dict:
-            payload = json.dumps(payload).encode('utf-8')
-        else:
-            payload = '{}'.format(payload).encode('utf-8')
-        
-        #socket_tcp_obj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #socket_tcp_obj.connect((host, port))
-        socket_tcp_obj.sendall(payload)
-        print('[ INFO ] TCP payload: {}'.format(payload))
-        #socket_tcp_obj.close()
-    except Exception as e:
-        print('[ EXCEPTION ] {}'.format(e))
-    return None
-
-
-def send_udp(socket_udp_obj, host, port, payload):
-    try:
-        if type(payload) is dict:
-            payload = json.dumps(payload).encode('utf-8')
-        else:
-            payload = '{}'.format(payload).encode('utf-8')
-        
-        #socket_udp_obj = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socket_udp_obj.sendto(payload,(host,port))
-        print('[ INFO ] UDP payload: {}'.format(payload))
-        #socket_udp_obj.close()
-    except Exception as e:
-        print('[ EXCEPTION ] {}'.format(e))
-    return None
-
-
-def simulate_payload(ip_addr, userid, score_bias=50, enable_sleep=True):
+def simulate_payload(enable_sleep=True):
     '''
         score_bias: On a scale of 1-100. It'll bias the scores to be more around that value
     '''
     if enable_sleep:
         time.sleep(random.random()*2)
-
+    
     payload = {
-        'ip': ip_addr,
-        'userid': userid,
-        'name':  'cheat',
-        'score': random.triangular(1,100,score_bias) / 100 #random.random()
+        'name': random.choice(usernames),
+        'group': random.choice(['groupA', 'groupB', 'groupC']),
+        'duration': random.random() * 1000,
+        'flag': random.randint(0,1),
+        'score': random.triangular(1,100,30) / 100
     }
     return payload
 
@@ -139,58 +87,12 @@ def simulate_payload(ip_addr, userid, score_bias=50, enable_sleep=True):
 ####################################################
 
 def main():
-    userid  = "smurfer1" #generate_username()[0] 
-    ip_addr = get_ip()
-    
-    '''
-    # TCP Connection
-    try:
-        host = simulator_config['host']
-        port = simulator_config['port']
-        socket_tcp_obj = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket_tcp_obj.connect((host, port))
-        while True:
-            time.sleep(random.random()*2)
-            
-            payload = {
-                'score': random.random()
-            }
-            
-            send_tcp(socket_tcp_obj, payload)
-    except Exception as e:
-        print('[ EXCEPTION ] {}'.format(e))
-        sys.exit()
-    '''
-    
-    '''
-    # UDP Connection
-    try:
-        #host = simulator_config['host']
-        host = simulator_config['host']
-        port = simulator_config['port']
-        socket_udp_obj = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        while True:
-            time.sleep(random.random()*2)
-            
-            payload = {
-                'name':'cheat',
-                'score': random.random()
-            }
-            
-            send_udp(socket_udp_obj, host, port, payload)
-    except Exception as e:
-        print('[ EXCEPTION ] {}'.format(e))
-        sys.exit()
-    '''
     
     # PubSub Sink
     try:
         pubsub_publisher = pubsub_v1.PublisherClient()
         while True:
-            project_id   = 'gaming-demos' 
-            pubsub_topic = 'antidote-cheat'
-            
-            payload = simulate_payload(score_bias=50, ip_addr=ip_addr, userid=userid)
+            payload = simulate_payload()
             print('[ INFO ] {}'.format(payload))
             pubsub_publish(pubsub_publisher, project_id=project_id, pubsub_topic=pubsub_topic, message=payload)
     except Exception as e:
