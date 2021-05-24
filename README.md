@@ -8,7 +8,7 @@
 ```
 cd ./gcp-data-streaming/
 
-# NOTE: Be sure to update the gcp_setup.sh file to include your GCP project id.
+# NOTE: Be sure to update the gcp_setup.sh file to set the GCP_PROJECT_ID to your GCP project id.
 
 ./gcp_setup.sh
 ```
