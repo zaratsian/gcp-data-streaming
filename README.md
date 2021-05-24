@@ -4,6 +4,13 @@
 
 * Docker must be installed.
 
+**Initial GCP Setup:**
+```
+cd ./gcp-data-streaming/
+
+./gcp_setup.sh
+```
+
 **To start the simulator:**
 ```
 cd ./gcp-data-streaming/simulator/
