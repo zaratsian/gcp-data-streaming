@@ -1,7 +1,8 @@
 # Google Cloud - Data Streaming
 
-**Dependenies**
-Docker must be installed.
+**Dependenies:**
+
+* Docker must be installed.
 
 **To start the simulator:**
 ```
